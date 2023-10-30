@@ -1,13 +1,35 @@
-# Sample Hardhat Project
+# Attractor faucet
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This project contains smart contracts and scripts, related to
+Attractor faucet.
 
-Try running some of the following tasks:
+## Getting started
 
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+npm install;
+cp .env.example .env;
+
+# Edit environment with your favourite editor
+edit .env
+```
+
+## Deployment
+
+```shell
+# Run deployment script
+npx hardhat run --network attratest scripts/deploy.ts
+
+# Your deployment info stored in ./deployment/faucet-<timestamp>.json
+```
+
+## Verification
+
+TODO :)
+
+## Funding
+
+```shell
+# Run funding task
+# Note that the script will transfer your funds to faucet SC!
+npx hardhat fund <address> <amount>
 ```
