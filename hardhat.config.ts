@@ -136,4 +136,36 @@ task('flush', 'Flush all dispensible tokens from a faucet')
     console.log(`Flush confirmed. The job is done!`);
   });
 
+task('dispense', 'Dispense tokens from a faucet')
+  .addPositionalParam('address', 'Address of faucet to trigger')
+  .addPositionalParam('recipient', 'Account to receive tokens')
+  .addPositionalParam('identity', 'Account identity e.g. ip-address')
+  .setAction(async ({ address, recipient, identity }, hre) => {
+    console.log(`About to dispense tokens from ${address} to ${recipient}`);
+    const signer = new hre.ethers.Wallet(getenv('FAUCET_SIGNER_PRIV_KEY'));
+    const Faucet = await hre.ethers.getContractFactory('Faucet');
+    const faucet = Faucet.attach(address);
+    const deadline = Math.round(Date.now() / 1000) + 60 * 20;
+    const name = hre.ethers.utils.solidityKeccak256(['string'], [identity]);
+    const hash = hre.ethers.utils.solidityKeccak256(
+      ["string", "address", "bytes32", "address", "uint64"],
+      [
+        "Attractor faucet dispension! Our lucky guy is",
+        recipient,
+        name,
+        faucet.address,
+        deadline,
+      ],
+    );
+    console.log(hash);
+    const hashBytes = hre.ethers.utils.arrayify(hash);
+    const sigString = await signer.signMessage(hashBytes);
+    const signature = hre.ethers.utils.splitSignature(sigString);
+    const actor = { addr: recipient, name };
+    const tx = await faucet.dispense(actor, signature, deadline);
+    console.log(`Transaction hash is ${tx.hash}`);
+    await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
+    console.log(`Dispensiom confirmed. Job is done!`);
+  });
+
 export default config;
