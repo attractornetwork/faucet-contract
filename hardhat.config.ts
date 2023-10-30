@@ -123,4 +123,17 @@ task('trust', 'Set trusted signer of a faucet')
     console.log(`Job is done.`);
   });
 
+task('transfer', 'Transfer ownership of a faucet')
+  .addPositionalParam('address', 'Address of faucet to transfer')
+  .addPositionalParam('owner', 'Address of faucet to transfer')
+  .setAction(async ({ address, owner }, hre) => {
+    console.log(`About to transfer ownership of ${address} to ${owner}`);
+    const Faucet = await hre.ethers.getContractFactory('Faucet');
+    const faucet = Faucet.attach(address);
+    const tx = await faucet.transferOwnership(owner);
+    console.log(`Transaction hash is ${tx.hash}`);
+    await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
+    console.log(`Transfer confirmed. Job is done!`);
+  });
+
 export default config;
