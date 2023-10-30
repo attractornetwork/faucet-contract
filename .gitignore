@@ -9,3 +9,12 @@ typechain-types
 cache
 artifacts
 
+# Configuration
+.env
+
+# Deployment
+deploy/*.json
+
+# Deployment arguments
+scripts/args.json
+
