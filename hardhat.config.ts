@@ -83,19 +83,6 @@ task('fund', 'Move funds to specified faucet')
     console.log(`Successfully funded!`);
   })
 
-  task('trust', 'Set trusted signer of a faucet')
-  .addPositionalParam('address', 'Address of faucet to change')
-  .addPositionalParam('signer', 'Address of trusted signer')
-  .setAction(async ({ address, signer }, hre) => {
-    const Faucet = await hre.ethers.getContractFactory('Faucet');
-    const faucet = Faucet.attach(address);
-    console.log(`About to transfer trust of ${address} to ${signer}`);
-    const tx = await faucet.trust(signer)
-    console.log(`transaction hash is ${tx.hash}`);
-    await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
-    console.log(`Job is done.`);
-  });
-
 task('retrust', 'Generate and set new trusted address of faucet')
   .addPositionalParam('address', 'Address of faucet to change')
   .setAction(async ({ address }, hre) => {
