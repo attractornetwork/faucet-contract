@@ -123,4 +123,17 @@ task('transfer', 'Transfer ownership of a faucet')
     console.log(`Transfer confirmed. Job is done!`);
   });
 
+task('flush', 'Flush all dispensible tokens from a faucet')
+  .addPositionalParam('address', 'Address of faucet to interact with')
+  .setAction(async ({ address }, hre) => {
+    const Faucet = await hre.ethers.getContractFactory('Faucet');
+    const faucet = Faucet.attach(address);
+    console.log(`About to flush tokens from ${address}`);
+    
+    const tx = await faucet.flush();
+    console.log(`Transaction hash is ${tx.hash}`);
+    await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
+    console.log(`Flush confirmed. The job is done!`);
+  });
+
 export default config;
