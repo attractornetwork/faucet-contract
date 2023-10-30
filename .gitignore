@@ -5,6 +5,9 @@ coverage.json
 typechain
 typechain-types
 
+# IDEs
+.vscode
+
 # Hardhat files
 cache
 artifacts
