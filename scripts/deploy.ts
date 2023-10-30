@@ -16,10 +16,6 @@ async function main() {
   const faucet = await Faucet.deploy(token, portion, signer.address);
   const deployment = faucet.deployTransaction;
   console.log(`Deployment started. Transaction hash is ${deployment.hash}`);
-  const confirmations = parseInt(process.env.MIN_CONFIRMATIONS ?? 'fill .env bro');
-  console.log(`Waiting for ${confirmations} confirmations...`);
-  await deployment.wait(2);
-  console.log(`The job is done :)`);
   console.log(`Saving info...`);
 
   const doc = {
@@ -43,6 +39,11 @@ async function main() {
   const filename = path.join(process.cwd(), 'deploy', filekey);
   fs.writeFileSync(filename, JSON.stringify(doc, undefined, 2));
   console.log(`Deployment info has beed saved to ${filename}`);
+
+  const confirmations = parseInt(process.env.MIN_CONFIRMATIONS ?? 'fill .env bro');
+  console.log(`Waiting for ${confirmations} confirmations...`);
+  await deployment.wait(confirmations);
+  console.log(`The job is done :)`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

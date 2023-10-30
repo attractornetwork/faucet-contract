@@ -17,7 +17,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 10000,
           }
         }
       }
@@ -39,7 +39,7 @@ const config: HardhatUserConfig = {
         chainId: 9701,
         network: 'attratest',
         urls: {
-          apiURL: 'https://explorer.dev.attra.me/api/',
+          apiURL: 'https://explorer.dev.attra.me/api',
           browserURL: 'https://explorer.dev.attra.me/',
         },
       }
