@@ -5,13 +5,13 @@ pragma solidity ^0.8.17;
     @title TimeContext
     @author iMe Lab
 
-    @notice Contract fragment, providing context of present moment
+    @notice SC part, providing context of present moment
  */
 abstract contract TimeContext {
     /**
         @notice Get present moment timestamp
         
-        @dev It should be overridden in mock contracts
+        @dev It may be overridden in mock contracts
         Any implementation of this function should follow a rule:
         sequential calls of _now() should give non-decreasing sequence of numbers.
         It's forbidden to travel back in time.

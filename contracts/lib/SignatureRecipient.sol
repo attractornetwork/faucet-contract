@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+/**
+    @title SignatureRecipient
+    @author iMe Lab
+    @notice SC part implementing simple data-trust mechanism
+ */
 contract SignatureRecipient {
     error SignerMismatch(address expected, address actual);
 
@@ -17,12 +22,12 @@ contract SignatureRecipient {
     }
 
     function _trustTo(address signer_) internal {
-        require (_signer != signer_);
+        require (signer_ != _signer);
         _signer = signer_;
     }
 
-    function _verify(bytes32 fingerprint, Signature memory sig) internal view {
-        address signer_ = ecrecover(fingerprint, sig.v, sig.r, sig.s);
+    function _verify(bytes32 hash, Signature memory sig) internal view {
+        address signer_ = ecrecover(hash, sig.v, sig.r, sig.s);
         if (signer_ != _signer) revert SignerMismatch(_signer, signer_);
     }
 }

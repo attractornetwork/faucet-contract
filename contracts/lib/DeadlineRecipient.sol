@@ -3,6 +3,11 @@ pragma solidity ^0.8.17;
 
 import {TimeContext} from "./TimeContext.sol";
 
+/**
+    @title DeadlineRecipient
+    @author iMe Lab
+    @notice Library implementing deadline acceptance
+ */
 abstract contract DeadlineRecipient is TimeContext {
   error DeadlineIsTooFar();
   error DeadlineWasExceeded();

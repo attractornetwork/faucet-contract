@@ -3,6 +3,10 @@ pragma solidity ^0.8.17;
 
 import {Currency} from "./Currency.sol";
 
+/**
+    @title Dispenser
+    @author iMe Lab
+ */
 abstract contract Dispenser {
     using Currency for address;
 

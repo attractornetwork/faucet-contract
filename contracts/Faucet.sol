@@ -55,7 +55,6 @@ contract Faucet is
                 "Attractor faucet dispension! Our lucky guy is",
                 actor.addr,
                 actor.name,
-                "Dispension restrictions are",
                 address(this),
                 deadline
             )

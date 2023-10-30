@@ -6,7 +6,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /**
     @title Currency
     @author iMe Lab
-    @notice Library for working with arbitrary crypto currencies
+    @notice Library implementing ERC20/Ether abstraction
  */
 library Currency {
     error CurrencyTransferFailed();
