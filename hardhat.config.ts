@@ -47,4 +47,41 @@ const config: HardhatUserConfig = {
   }
 };
 
+task('fund', 'Move funds to specified faucet')
+  .addPositionalParam('address', 'Address of faucet to send funds to')
+  .addPositionalParam('amount', 'Amount of tokens to send')
+  .setAction(async ({ address, amount }, hre) => {
+    const Faucet = await hre.ethers.getContractFactory('Faucet');
+    const faucet = Faucet.attach(address);
+    const token = await faucet.token();
+    const [bank] = await hre.ethers.getSigners();
+
+    if (token === '0x' + '0'.repeat(40)) {
+      console.log(`About to fund ${address} with ${amount} ether`);
+      const etherAmount = hre.ethers.utils.parseEther(amount);
+      const response = await bank.sendTransaction({
+        value: etherAmount,
+        to: address,
+      });
+      console.log(`Transaction hash is ${response.hash}`);
+      await response.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
+    } else {
+      const ERC20 = await hre.ethers.getContractFactory('ERC20');
+      const erc20 = ERC20.attach(token);
+      const [symbol, name, decimals] = await Promise.all([
+        erc20.callStatic.symbol(),
+        erc20.callStatic.name(),
+        erc20.callStatic.decimals().then((value: string) => Number(value)),
+      ]);
+      console.log(`About to fund ${address} with ${amount} ${symbol} (${name})`);
+      const tokenAmount = hre.ethers.utils.parseUnits(amount, decimals);
+      const connectedToken = erc20.connect(bank);
+      const tx = await connectedToken.transfer(address, tokenAmount);
+      await tx.wait()
+    }
+
+    console.log(`Successfully funded!`);
+  })
+
+
 export default config;
