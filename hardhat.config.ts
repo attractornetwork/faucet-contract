@@ -83,5 +83,44 @@ task('fund', 'Move funds to specified faucet')
     console.log(`Successfully funded!`);
   })
 
+  task('trust', 'Set trusted signer of a faucet')
+  .addPositionalParam('address', 'Address of faucet to change')
+  .addPositionalParam('signer', 'Address of trusted signer')
+  .setAction(async ({ address, signer }, hre) => {
+    const Faucet = await hre.ethers.getContractFactory('Faucet');
+    const faucet = Faucet.attach(address);
+    console.log(`About to transfer trust of ${address} to ${signer}`);
+    const tx = await faucet.trust(signer)
+    console.log(`transaction hash is ${tx.hash}`);
+    await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
+    console.log(`Job is done.`);
+  });
+
+task('retrust', 'Generate and set new trusted address of faucet')
+  .addPositionalParam('address', 'Address of faucet to change')
+  .setAction(async ({ address }, hre) => {
+    const Faucet = await hre.ethers.getContractFactory('Faucet');
+    const faucet = Faucet.attach(address);
+    const wallet = hre.ethers.Wallet.createRandom();
+    console.log(`Signer private key is ${wallet.privateKey}`);
+    console.log(`About to transfer trust of ${address} to ${wallet.address}`);
+    const tx = await faucet.trust(wallet.address);
+    console.log(`Transaction hash is ${tx.hash}`);
+    await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
+    console.log(`Job is done.`);
+  });
+
+task('trust', 'Set trusted signer of a faucet')
+  .addPositionalParam('address', 'Address of faucet to change')
+  .addPositionalParam('signer', 'Address of trusted signer')
+  .setAction(async ({ address, signer }, hre) => {
+    const Faucet = await hre.ethers.getContractFactory('Faucet');
+    const faucet = Faucet.attach(address);
+    console.log(`About to transfer trust of ${address} to ${signer}`);
+    const tx = await faucet.trust(signer)
+    console.log(`Transaction hash is ${tx.hash}`);
+    await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
+    console.log(`Job is done.`);
+  });
 
 export default config;
