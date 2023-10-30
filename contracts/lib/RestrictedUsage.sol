@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.7;
 
 import {TimeContext} from "./TimeContext.sol";
 
@@ -41,12 +41,12 @@ contract RestrictedUsage is TimeContext {
     function _canUse(Actor memory actor) private view returns(bool) {
         uint64 usedAt = _usedAt(actor);
         uint64 allowedAt = usedAt + _usageInterval;
-        return _now() > allowedAt;
+        return _now() >= allowedAt;
     }
 
     function _usedAt(Actor memory actor) private view returns(uint64) {
         uint64 nameUsedAt = _namesUsage[actor.name];
         uint64 addrUsedAt = _addressUsage[actor.addr];
-        return nameUsedAt > addrUsedAt ? nameUsedAt : addrUsedAt;
+        return nameUsedAt >= addrUsedAt ? nameUsedAt : addrUsedAt;
     }
 }

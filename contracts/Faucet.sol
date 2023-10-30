@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.7;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Dispenser} from "./lib/Dispenser.sol";
@@ -15,16 +15,16 @@ contract Faucet is
     DeadlineRecipient
 {
     constructor(
-        address token,
-        uint256 portion,
-        address signer
+        address dispenseToken,
+        uint256 dispensePortion,
+        address trustedSigner
     )
         Ownable(_msgSender())
         DeadlineRecipient(3600)
         RestrictedUsage(86400)
-        Dispenser(token, portion)
+        Dispenser(dispenseToken, dispensePortion)
     {
-        _trustTo(signer);
+        _trustTo(trustedSigner);
     }
 
     function dispense(
