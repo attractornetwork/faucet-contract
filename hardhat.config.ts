@@ -47,6 +47,30 @@ const config: HardhatUserConfig = {
   }
 };
 
+task('info', 'Get information about specified faucet')
+  .addPositionalParam('address', 'Address of faucet to send funds to')
+  .setAction(async ({ address }, hre) => {
+    const Faucet = await hre.ethers.getContractFactory('Faucet');
+    const faucet = Faucet.attach(address);
+    const [token, portion, signer, owner] = await Promise.all([
+      faucet.callStatic.token(),
+      faucet.portion(),
+      faucet.callStatic.signer(),
+      faucet.owner(),
+    ]);
+    console.log(`Faucet address is ${address}`);
+    console.log(`Faucet owner is ${owner}`);
+    console.log(`Faucet signer is ${signer}`);
+    if (token === '0x' + '0'.repeat(40)) {
+      console.log(`Faucet dispensing ATTRA`);
+      const normalPortion = hre.ethers.utils.formatEther(portion);
+      console.log(`Faucet portion is ${normalPortion} (decimal-aware)`);
+    } else {
+      console.log(`Faucet dispensing ERC20 at ${token}`);
+      console.log(`Faucet portion is ${portion} (decimal-unware)`);
+    }
+  });
+
 task('fund', 'Move funds to specified faucet')
   .addPositionalParam('address', 'Address of faucet to send funds to')
   .addPositionalParam('amount', 'Amount of tokens to send')
