@@ -46,6 +46,10 @@ contract Faucet is
         _trustTo(signer_);
     }
 
+    receive() external payable override {
+        // accept any currency
+    }
+
     function _fingerprint(
         RestrictedUsage.Actor calldata actor,
         uint64 deadline

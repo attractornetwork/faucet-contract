@@ -35,7 +35,7 @@ abstract contract Dispenser {
         _token.transfer(recipient, balance);
     }
 
-    receive() external payable {
-        require (_token == Currency.NATIVE);
+    receive() external payable virtual {
+        // Accept any currency
     }
 }

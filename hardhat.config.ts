@@ -29,21 +29,6 @@ const config: HardhatUserConfig = {
       url: getenv('ATTRA_TESTNET_URL'),
       accounts: [getenv('ACCOUNT_PRIV_KEY')],
     },
-  },
-  etherscan: {
-    apiKey: {
-      attratest: getenv('ATTRA_EXPLORER_API_KEY'),
-    },
-    customChains: [
-      {
-        chainId: 9701,
-        network: 'attratest',
-        urls: {
-          apiURL: 'https://explorer.dev.attra.me/api',
-          browserURL: 'https://explorer.dev.attra.me/',
-        },
-      }
-    ]
   }
 };
 
@@ -90,12 +75,11 @@ task('fund', 'Move funds to specified faucet')
       console.log(`Transaction hash is ${response.hash}`);
       await response.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
     } else {
-      const ERC20 = await hre.ethers.getContractFactory('ERC20');
-      const erc20 = ERC20.attach(token);
+      const erc20 = await hre.ethers.getContractAt('ERC20', token);
       const [symbol, name, decimals] = await Promise.all([
         erc20.callStatic.symbol(),
         erc20.callStatic.name(),
-        erc20.callStatic.decimals().then((value: string) => Number(value)),
+        erc20.callStatic.decimals(),
       ]);
       console.log(`About to fund ${address} with ${amount} ${symbol} (${name})`);
       const tokenAmount = hre.ethers.utils.parseUnits(amount, decimals);
@@ -158,6 +142,25 @@ task('flush', 'Flush all dispensible tokens from a faucet')
     console.log(`Transaction hash is ${tx.hash}`);
     await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
     console.log(`Flush confirmed. The job is done!`);
+  });
+
+task('fundCoin', 'Fund faucet with native ETH coins')
+  .addPositionalParam('address', 'Address of faucet to fund')
+  .addPositionalParam('amount', 'Amount of ETH to send')
+  .setAction(async ({ address, amount }, hre) => {
+    const [bank] = await hre.ethers.getSigners();
+
+    console.log(`About to fund ${address} with ${amount} ETH`);
+    const etherAmount = hre.ethers.utils.parseEther(amount);
+    
+    const tx = await bank.sendTransaction({
+      to: address,
+      value: etherAmount
+    });
+    
+    console.log(`Transaction hash is ${tx.hash}`);
+    await tx.wait(parseInt(getenv('MIN_CONFIRMATIONS')));
+    console.log(`Successfully funded with ETH!`);
   });
 
 task('dispense', 'Dispense tokens from a faucet')
